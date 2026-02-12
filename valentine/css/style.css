@@ -1,0 +1,2052 @@
+/* ===================================================================
+   THE ETERNAL TOUR — CSS Design System
+   =================================================================== */
+
+/* --- Custom Properties --- */
+:root {
+    --bg-deep: #0a0a0a;
+    --bg-alt: #141414;
+    --primary: #e63946;
+    --secondary: #f4a261;
+    --tertiary: #9b5de5;
+    --text: #f1f1f1;
+    --text-muted: #888;
+    --font-metal: 'Metal Mania', cursive;
+    --font-bebas: 'Bebas Neue', sans-serif;
+    --font-body: 'Oswald', sans-serif;
+    --font-hand: 'Caveat', cursive;
+    --font-mono: 'Share Tech Mono', monospace;
+}
+
+/* --- Reset --- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body {
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    cursor: default;
+}
+
+/* Grunge noise overlay */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+}
+
+/* Vignette */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 9998;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+}
+
+/* Guitar pick cursor (easter egg 10) */
+body.guitar-pick-cursor,
+body.guitar-pick-cursor * {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M12 0C6 0 2 4 2 10c0 8 10 18 10 18s10-10 10-18C22 4 18 0 12 0z' fill='%23f4a261' stroke='%23e63946' stroke-width='1'/%3E%3Ctext x='12' y='14' text-anchor='middle' font-size='8' fill='%23000'%3E♪%3C/text%3E%3C/svg%3E") 12 14, auto !important;
+}
+
+/* --- Utility --- */
+.hidden { display: none !important; }
+
+/* --- Sections --- */
+.section {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    overflow: hidden;
+}
+
+.section:nth-child(even) {
+    background: var(--bg-alt);
+}
+
+.section-inner {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.section-title {
+    font-family: var(--font-bebas);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    letter-spacing: 0.15em;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--primary);
+}
+
+/* --- Lyric Quotes --- */
+.lyric-quote {
+    font-family: var(--font-hand);
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.faint-lyric {
+    opacity: 0.15;
+    margin-top: 3rem;
+}
+
+.lyric-attr {
+    opacity: 0.5;
+    font-size: 0.9em;
+}
+
+/* --- Scroll Animations --- */
+[data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+[data-animate].visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===================================================================
+   SECTION 0: SOUNDCHECK (Hero)
+   =================================================================== */
+#soundcheck {
+    background: var(--bg-deep);
+    min-height: 100vh;
+}
+
+.spotlight {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(230,57,70,0.15) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: spotlightPulse 4s ease-in-out infinite;
+}
+
+@keyframes spotlightPulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+.hero-title {
+    font-family: var(--font-metal);
+    font-size: clamp(3rem, 10vw, 7rem);
+    text-align: center;
+    color: var(--primary);
+    text-shadow:
+        0 0 2px var(--primary),
+        0 0 10px var(--primary),
+        0 0 20px rgba(230,57,70,0.5),
+        0 0 40px rgba(230,57,70,0.3);
+    position: relative;
+    z-index: 2;
+    letter-spacing: 0.05em;
+}
+
+/* Neon flicker */
+.neon-flicker {
+    animation: neonFlicker 3s infinite;
+}
+
+@keyframes neonFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow:
+            0 0 2px var(--primary),
+            0 0 10px var(--primary),
+            0 0 20px rgba(230,57,70,0.5),
+            0 0 40px rgba(230,57,70,0.3);
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+        opacity: 0.6;
+    }
+}
+
+.hero-subtitle {
+    font-family: var(--font-bebas);
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    letter-spacing: 0.3em;
+    color: var(--text);
+    text-align: center;
+    margin-top: 1rem;
+    opacity: 0.8;
+}
+
+.hero-quote {
+    margin-top: 2rem;
+    opacity: 0.4;
+}
+
+.scroll-prompt {
+    position: absolute;
+    bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-bebas);
+    font-size: 1.2rem;
+    letter-spacing: 0.2em;
+    color: var(--secondary);
+    opacity: 0.7;
+    animation: fadeInUp 2s ease 1s both;
+}
+
+.arrow-bounce {
+    animation: bounce 1.5s ease infinite;
+    font-size: 1.5rem;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 0.7; transform: translateY(0); }
+}
+
+/* ===================================================================
+   SECTION 1: BACKSTAGE PASS
+   =================================================================== */
+#backstage-pass {
+    background: var(--bg-alt);
+}
+
+#backstage-pass .section-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lanyard {
+    width: 3px;
+    height: 80px;
+    background: linear-gradient(to bottom, var(--text-muted), var(--secondary));
+    margin-bottom: -2px;
+}
+
+.pass-card {
+    width: 320px;
+    min-height: 420px;
+    background: #1a1a2e;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: passSway 4s ease-in-out infinite;
+    transform-origin: top center;
+}
+
+@keyframes passSway {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+}
+
+.pass-holographic {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(
+        135deg,
+        transparent 20%,
+        rgba(155, 93, 229, 0.1) 30%,
+        rgba(244, 162, 97, 0.1) 40%,
+        transparent 50%,
+        rgba(230, 57, 70, 0.1) 60%,
+        rgba(155, 93, 229, 0.1) 70%,
+        transparent 80%
+    );
+    background-size: 200% 200%;
+    animation: holoShimmer 3s ease infinite;
+    pointer-events: none;
+}
+
+@keyframes holoShimmer {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 200%; }
+}
+
+.pass-content {
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.pass-header {
+    font-family: var(--font-bebas);
+    font-size: 2rem;
+    letter-spacing: 0.3em;
+    color: var(--secondary);
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 0.5rem;
+    width: 100%;
+}
+
+.pass-id {
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    color: var(--primary);
+    cursor: pointer;
+    transition: text-shadow 0.3s;
+}
+
+.pass-id:hover {
+    text-shadow: 0 0 10px var(--primary);
+}
+
+.pass-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #2a2a3e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.silhouette {
+    width: 50px;
+    height: 70px;
+    background: #3a3a4e;
+    border-radius: 50% 50% 0 0;
+    position: relative;
+}
+
+.silhouette::before {
+    content: '';
+    width: 35px;
+    height: 35px;
+    background: #3a3a4e;
+    border-radius: 50%;
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.pass-name {
+    font-family: var(--font-metal);
+    font-size: 2.5rem;
+    color: var(--text);
+    letter-spacing: 0.1em;
+}
+
+.pass-tour {
+    font-family: var(--font-bebas);
+    font-size: 1rem;
+    letter-spacing: 0.4em;
+    color: var(--text-muted);
+}
+
+.pass-description {
+    margin-top: 2rem;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--text-muted);
+    text-align: center;
+    max-width: 500px;
+    line-height: 1.6;
+}
+
+/* ===================================================================
+   SECTION 2: TOUR DATES
+   =================================================================== */
+#tour-dates {
+    background: var(--bg-deep);
+}
+
+.poster {
+    background: #111;
+    border: 2px solid #333;
+    padding: 3rem 2rem;
+    position: relative;
+    max-width: 700px;
+    margin: 0 auto;
+    clip-path: polygon(
+        0% 2%, 3% 0%, 97% 0%, 100% 3%,
+        100% 97%, 98% 100%, 2% 100%, 0% 98%
+    );
+}
+
+.poster::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(230,57,70,0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(244,162,97,0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.poster-title {
+    font-family: var(--font-metal);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    text-align: center;
+    color: var(--primary);
+    text-shadow: 0 0 20px rgba(230,57,70,0.3);
+    margin-bottom: 0.5rem;
+}
+
+.poster-subtitle {
+    font-family: var(--font-bebas);
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #333;
+}
+
+.tour-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.tour-date {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #222;
+    align-items: center;
+    position: relative;
+}
+
+.tour-date .date {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--secondary);
+}
+
+.tour-date .city {
+    font-family: var(--font-bebas);
+    font-size: 1.3rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+}
+
+.tour-date .venue {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    cursor: pointer;
+}
+
+.sold-out {
+    font-family: var(--font-bebas);
+    font-size: 0.9rem;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    padding: 2px 8px;
+    transform: rotate(-5deg);
+    opacity: 0.7;
+    letter-spacing: 0.1em;
+    grid-column: 1 / -1;
+    justify-self: end;
+    margin-top: -0.5rem;
+}
+
+.tonight-badge {
+    font-family: var(--font-bebas);
+    font-size: 1.1rem;
+    color: var(--bg-deep);
+    background: var(--primary);
+    padding: 4px 16px;
+    letter-spacing: 0.2em;
+    animation: tonightPulse 2s ease-in-out infinite;
+    grid-column: 1 / -1;
+    justify-self: end;
+}
+
+@keyframes tonightPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(230,57,70,0.5); }
+    50% { box-shadow: 0 0 30px rgba(230,57,70,0.8); }
+}
+
+.tour-date.tonight {
+    border: 1px solid var(--primary);
+    padding: 1rem;
+    margin-top: 0.5rem;
+    background: rgba(230,57,70,0.05);
+}
+
+.poster-quote {
+    font-family: var(--font-hand);
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 2rem;
+    opacity: 0.6;
+}
+
+/* Starry night overlay for Easter Egg #2 */
+#starry-night-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #0a0a2e;
+    opacity: 0;
+    transition: opacity 1s ease;
+    pointer-events: none;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#starry-night-overlay.active {
+    opacity: 1;
+}
+
+#starry-night-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    box-shadow:
+        50px 30px 0 0 white, 150px 80px 0 0 white, 250px 50px 0 0 white,
+        350px 120px 0 0 white, 450px 40px 0 0 white, 550px 90px 0 0 white,
+        100px 200px 0 0 white, 200px 180px 0 0 white, 400px 200px 0 0 white,
+        300px 300px 0 0 white, 500px 250px 0 0 white, 600px 300px 0 0 white,
+        80px 350px 0 0 white, 180px 400px 0 0 white, 380px 380px 0 0 white,
+        520px 350px 0 0 white, 650px 150px 0 0 white, 700px 280px 0 0 white;
+    border-radius: 50%;
+}
+
+.starry-text {
+    font-family: var(--font-hand);
+    font-size: 1.5rem;
+    color: rgba(255,255,255,0.6);
+    z-index: 1;
+    text-align: center;
+    padding: 2rem;
+}
+
+/* ===================================================================
+   SECTION 3: THE SETLIST
+   =================================================================== */
+#setlist {
+    background: var(--bg-alt);
+}
+
+.setlist-paper {
+    background: #f5f0e8;
+    padding: 2rem 2.5rem;
+    max-width: 500px;
+    margin: 0 auto;
+    transform: rotate(-2deg);
+    position: relative;
+    box-shadow: 5px 5px 20px rgba(0,0,0,0.4);
+    clip-path: polygon(
+        0% 0%, 98% 1%, 100% 0%,
+        100% 99%, 97% 100%, 0% 100%
+    );
+}
+
+.tape {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 25px;
+    background: linear-gradient(135deg, rgba(255,255,200,0.6), rgba(255,255,200,0.3));
+    border: 1px solid rgba(200,200,150,0.4);
+}
+
+.setlist-content {
+    color: #222;
+}
+
+.setlist-header {
+    font-family: var(--font-hand);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #111;
+}
+
+.setlist-divider {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: #999;
+    margin: 0.5rem 0;
+    overflow: hidden;
+}
+
+.setlist-songs {
+    list-style: none;
+    counter-reset: songs;
+    padding: 0;
+}
+
+.setlist-songs .song {
+    font-family: var(--font-hand);
+    font-size: 1.3rem;
+    color: #333;
+    padding: 0.3rem 0;
+    counter-increment: songs;
+    cursor: default;
+}
+
+.setlist-songs .song::before {
+    content: counter(songs) ". ";
+    color: #999;
+}
+
+.song-note {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.encore-song {
+    font-family: var(--font-hand);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary) !important;
+    text-shadow: 0 0 10px rgba(230,57,70,0.3);
+    padding: 0.5rem 0;
+    cursor: default;
+}
+
+#thunder-song, #ocean-song {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#thunder-song:hover, #ocean-song:hover {
+    transform: scale(1.02);
+}
+
+/* Teardrop easter egg */
+.teardrop {
+    position: absolute;
+    width: 60px;
+    height: 80px;
+    right: 60px;
+    bottom: 80px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: radial-gradient(circle at 40% 40%, rgba(100,150,200,0.3), rgba(100,150,200,0.1));
+    opacity: 0;
+    transition: opacity 2s ease;
+    pointer-events: none;
+}
+
+.teardrop.visible {
+    opacity: 0.3;
+}
+
+.section-quote {
+    margin-top: 2rem;
+    opacity: 0.15;
+}
+
+/* ===================================================================
+   SECTION 4: THE DISCOGRAPHY
+   =================================================================== */
+#discography {
+    background: var(--bg-deep);
+    padding: 4rem 2rem;
+}
+
+.album-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    perspective: 1000px;
+}
+
+.album-card {
+    aspect-ratio: 1;
+    cursor: pointer;
+    perspective: 800px;
+}
+
+.album-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.album-card:hover .album-inner {
+    transform: rotateY(5deg) scale(1.02);
+}
+
+.album-card.flipped .album-inner {
+    transform: rotateY(180deg) !important;
+}
+
+.album-front, .album-back {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    backface-visibility: hidden;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.album-front {
+    display: flex;
+    flex-direction: column;
+}
+
+.album-back {
+    transform: rotateY(180deg);
+    background: #1a1a1a;
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.album-art {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.album-title {
+    font-family: var(--font-bebas);
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    text-align: center;
+    padding: 0.4rem;
+    color: var(--text);
+    background: rgba(0,0,0,0.8);
+}
+
+.album-date {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-align: center;
+    padding: 0.2rem;
+    color: var(--text-muted);
+    background: rgba(0,0,0,0.8);
+}
+
+.liner-notes {
+    text-align: center;
+    font-family: var(--font-hand);
+}
+
+.review-stars {
+    color: var(--secondary);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.liner-notes p {
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.review-source {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* --- Album Art CSS-Only Covers --- */
+
+/* 1. SWIPE RIGHT: Golden hexagon + lightning bolt */
+.album-swipe-right .album-art {
+    background: #0a0a0a;
+}
+
+.hexagon {
+    width: 60px;
+    height: 52px;
+    background: var(--secondary);
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+.lightning-bolt {
+    position: absolute;
+    width: 20px;
+    height: 40px;
+    background: var(--secondary);
+    clip-path: polygon(50% 0%, 100% 40%, 60% 40%, 80% 100%, 0% 55%, 40% 55%, 20% 0%);
+    right: 25%;
+    top: 30%;
+}
+
+/* 2. FIRST CONTACT: Two overlapping spotlight circles */
+.album-first-contact .album-art {
+    background: #0a0a0a;
+}
+
+.spotlight-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: absolute;
+    opacity: 0.7;
+}
+
+.spotlight-circle.left {
+    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+    left: 25%;
+}
+
+.spotlight-circle.right {
+    background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+    right: 25%;
+}
+
+/* 3. THREE DAYS OF THUNDER: Three lightning bolts */
+.album-thunder .album-art {
+    background: linear-gradient(to bottom, #1a1a3e, #0a0a1e);
+}
+
+.bolt {
+    width: 15px;
+    height: 50px;
+    background: var(--secondary);
+    clip-path: polygon(50% 0%, 100% 40%, 60% 40%, 80% 100%, 0% 55%, 40% 55%, 20% 0%);
+    position: absolute;
+}
+
+.bolt-1 { left: 20%; top: 20%; }
+.bolt-2 { left: 45%; top: 15%; }
+.bolt-3 { left: 70%; top: 25%; }
+
+/* 4. OFFICIAL: Red stamp text */
+.album-official .album-art {
+    background: #0a0a0a;
+}
+
+.stamp-text {
+    font-family: var(--font-bebas);
+    font-size: 2rem;
+    color: var(--primary);
+    border: 3px solid var(--primary);
+    padding: 0.2rem 1rem;
+    transform: rotate(-10deg);
+    letter-spacing: 0.2em;
+    opacity: 0.8;
+}
+
+/* 5. HOME: Singapore skyline */
+.album-home .album-art {
+    background: linear-gradient(to bottom, #1a1a2e 0%, #0a0a1e 100%);
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 0;
+}
+
+.skyline {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    position: absolute;
+    bottom: 0;
+    width: 80%;
+}
+
+.building {
+    background: #1a1a2e;
+    flex: 1;
+}
+
+.b1 { height: 40px; }
+.b2 { height: 65px; }
+.b3 { height: 80px; }
+.b4 { height: 55px; }
+.b5 { height: 45px; }
+
+.warm-window {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--secondary);
+    bottom: 30px;
+    left: 52%;
+    box-shadow: 0 0 10px var(--secondary), 0 0 20px rgba(244,162,97,0.5);
+    animation: windowGlow 2s ease-in-out infinite;
+}
+
+@keyframes windowGlow {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* 6. THE RING: Golden circle */
+.album-ring .album-art {
+    background: #0a0a0a;
+}
+
+.golden-ring {
+    width: 70px;
+    height: 70px;
+    border: 4px solid var(--secondary);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(244,162,97,0.5), inset 0 0 15px rgba(244,162,97,0.2);
+    animation: ringSparkle 3s ease-in-out infinite;
+}
+
+@keyframes ringSparkle {
+    0%, 100% { box-shadow: 0 0 15px rgba(244,162,97,0.5), inset 0 0 15px rgba(244,162,97,0.2); }
+    50% { box-shadow: 0 0 30px rgba(244,162,97,0.8), inset 0 0 20px rgba(244,162,97,0.4); }
+}
+
+/* Easter egg 6: spinning ring */
+#ring-album.spinning .album-inner {
+    animation: vinylSpin 2s linear infinite !important;
+    transform: none !important;
+}
+
+@keyframes vinylSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 7. OCEAN APART: Split warm/cool */
+.album-ocean .album-art {
+    background: linear-gradient(to right, #f4a261 0%, #f4a261 50%, #2a6fa8 50%, #2a6fa8 100%);
+}
+
+.ocean-split { display: none; }
+
+.soundwave {
+    width: 80%;
+    height: 2px;
+    background: var(--text);
+    position: absolute;
+    opacity: 0.5;
+}
+
+.soundwave::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 0;
+    right: 0;
+    height: 18px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent, transparent 4px,
+            rgba(255,255,255,0.3) 4px, rgba(255,255,255,0.3) 5px
+        );
+}
+
+/* 8. REUNION TOUR: Converging lights */
+.album-reunion .album-art {
+    background: #0a0a0a;
+}
+
+.converging-lights {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.light-beam {
+    position: absolute;
+    width: 60px;
+    height: 120px;
+    opacity: 0.4;
+}
+
+.left-beam {
+    background: linear-gradient(to bottom right, var(--primary), transparent);
+    left: 10%;
+    top: 0;
+    clip-path: polygon(0 0, 100% 100%, 50% 100%);
+}
+
+.right-beam {
+    background: linear-gradient(to bottom left, var(--secondary), transparent);
+    right: 10%;
+    top: 0;
+    clip-path: polygon(100% 0, 0% 100%, 50% 100%);
+}
+
+.bright-point {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 20px white, 0 0 40px rgba(255,255,255,0.5);
+}
+
+/* ===================================================================
+   SECTION 5: THE STAGE
+   =================================================================== */
+#the-stage {
+    background: linear-gradient(to bottom, #1a0a2e, #0a0a0a);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.stage-lights {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.stage-light {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    transition: transform 0.3s ease-out;
+}
+
+.light-crimson {
+    background: var(--primary);
+    top: 10%;
+    left: 15%;
+}
+
+.light-gold {
+    background: var(--secondary);
+    top: 5%;
+    left: 40%;
+}
+
+.light-violet {
+    background: var(--tertiary);
+    top: 15%;
+    right: 25%;
+}
+
+.light-white {
+    background: white;
+    top: 8%;
+    right: 10%;
+    opacity: 0.2;
+}
+
+.stage-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+    padding: 0 2rem;
+}
+
+.stage-text {
+    font-family: var(--font-bebas);
+    font-size: clamp(2rem, 6vw, 5rem);
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    background: linear-gradient(90deg, var(--secondary), var(--primary), var(--secondary));
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 4s ease infinite;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Guitar Strings */
+.guitar-strings {
+    width: 100%;
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.guitar-string {
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, #666, #bbb, #999, #bbb, #666);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: box-shadow 0.2s;
+}
+
+.guitar-string:nth-child(1) { height: 5px; }
+.guitar-string:nth-child(2) { height: 4px; }
+.guitar-string:nth-child(3) { height: 4px; }
+.guitar-string:nth-child(4) { height: 3px; }
+.guitar-string:nth-child(5) { height: 3px; }
+.guitar-string:nth-child(6) { height: 2px; }
+
+.guitar-string:hover {
+    box-shadow: 0 0 8px rgba(244,162,97,0.6);
+}
+
+.guitar-string.vibrating {
+    animation: stringVibrate 0.5s ease-out;
+}
+
+@keyframes stringVibrate {
+    0% { transform: translateY(0); }
+    10% { transform: translateY(-4px); }
+    20% { transform: translateY(3px); }
+    30% { transform: translateY(-2px); }
+    40% { transform: translateY(1.5px); }
+    50% { transform: translateY(-1px); }
+    60% { transform: translateY(0.5px); }
+    70% { transform: translateY(-0.3px); }
+    80% { transform: translateY(0.2px); }
+    100% { transform: translateY(0); }
+}
+
+.stage-quote {
+    opacity: 0.15;
+    margin-top: 2rem;
+}
+
+/* "Nothing Else Matters" transformation */
+#the-stage.nem-mode .stage-light {
+    background: var(--secondary) !important;
+    opacity: 0.3 !important;
+}
+
+#the-stage.nem-mode .stage-text {
+    font-family: var(--font-hand) !important;
+    font-size: clamp(2rem, 5vw, 4rem) !important;
+    -webkit-text-fill-color: var(--secondary) !important;
+    background: none !important;
+}
+
+#ember-canvas {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ===================================================================
+   BACKSTAGE DOOR (Easter Egg #9)
+   =================================================================== */
+.backstage-door {
+    height: 40px;
+    background: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.door-frame {
+    width: 30px;
+    height: 25px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px 2px 0 0;
+    position: relative;
+    cursor: pointer;
+    opacity: 0.08;
+    transition: opacity 0.5s;
+}
+
+.door-frame:hover {
+    opacity: 0.3;
+}
+
+.door-knob {
+    width: 4px;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Backstage Overlay */
+.backstage-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(5,5,5,0.97);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+}
+
+.backstage-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.backstage-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 2rem;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: color 0.3s;
+}
+
+.backstage-close:hover {
+    color: var(--text);
+}
+
+.lightbulb-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.lightbulb-wire {
+    width: 2px;
+    height: 60px;
+    background: #555;
+}
+
+.lightbulb {
+    width: 30px;
+    height: 40px;
+    background: radial-gradient(circle at 50% 30%, #fff8e1, #ffd54f, #ff8f00);
+    border-radius: 50% 50% 35% 35%;
+    position: relative;
+    animation: bulbSwing 3s ease-in-out infinite;
+    transform-origin: top center;
+}
+
+@keyframes bulbSwing {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
+.bulb-glow {
+    position: absolute;
+    top: -20px;
+    left: -30px;
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, rgba(255,213,79,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.backstage-letter {
+    max-width: 500px;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.backstage-letter p {
+    font-family: var(--font-hand);
+    font-size: 1.3rem;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.backstage-signoff {
+    margin-top: 1rem;
+    color: var(--secondary) !important;
+    font-weight: 700;
+}
+
+/* ===================================================================
+   SECTION 6: TICKET STUB
+   =================================================================== */
+#ticket-stub {
+    background: var(--bg-alt);
+}
+
+.ticket {
+    max-width: 600px;
+    margin: 0 auto;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.ticket-inner {
+    position: relative;
+    width: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    transform: rotate(2deg);
+}
+
+.ticket.flipped .ticket-inner {
+    transform: rotateY(180deg) rotate(2deg);
+}
+
+.ticket-front, .ticket-back {
+    backface-visibility: hidden;
+    border-radius: 8px;
+}
+
+.ticket-front {
+    display: flex;
+    background: #1a1a1a;
+    border: 2px solid #333;
+    overflow: hidden;
+}
+
+.ticket-back {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    transform: rotateY(180deg);
+    background: #f5f0e8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border-radius: 8px;
+}
+
+.ticket-back-text {
+    font-family: var(--font-hand);
+    font-size: 1.3rem;
+    color: #333;
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.ticket-back-sign {
+    font-family: var(--font-hand);
+    font-size: 1.1rem;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.ticket-perforation {
+    position: absolute;
+    right: 120px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 6px,
+            #333 6px,
+            #333 12px
+        );
+    z-index: 1;
+}
+
+.ticket-main {
+    flex: 1;
+    padding: 2rem;
+}
+
+.ticket-header {
+    font-family: var(--font-bebas);
+    font-size: 2.5rem;
+    letter-spacing: 0.2em;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.ticket-event {
+    font-family: var(--font-bebas);
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    color: var(--secondary);
+    margin-bottom: 1.5rem;
+}
+
+.ticket-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ticket-row {
+    display: flex;
+    gap: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+}
+
+.ticket-label {
+    color: var(--text-muted);
+}
+
+.ticket-value {
+    color: var(--text);
+    font-weight: bold;
+}
+
+.ticket-stub-side {
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-left: 2px dashed #333;
+    padding: 1rem;
+}
+
+.ticket-stub-text {
+    font-family: var(--font-bebas);
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    transform: rotate(90deg);
+}
+
+.ticket-stub-id {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+}
+
+/* ===================================================================
+   SECTION 7: THE ENCORE
+   =================================================================== */
+#encore {
+    background: var(--bg-deep);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.encore-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: black;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.encore-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+}
+
+.encore-chant {
+    font-family: var(--font-bebas);
+    font-size: clamp(3rem, 8vw, 6rem);
+    color: white;
+    letter-spacing: 0.2em;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.encore-spotlight {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 1s ease;
+}
+
+.encore-name {
+    font-family: var(--font-metal);
+    font-size: clamp(4rem, 12vw, 10rem);
+    color: var(--text);
+    text-shadow:
+        0 0 10px var(--primary),
+        0 0 30px rgba(230,57,70,0.3);
+    opacity: 0;
+    letter-spacing: 0.1em;
+}
+
+.encore-name .letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    cursor: pointer;
+}
+
+.encore-name .letter.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.encore-question {
+    font-family: var(--font-bebas);
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    letter-spacing: 0.15em;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0;
+    margin-top: 1rem;
+}
+
+.encore-buttons {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+}
+
+.btn-yes {
+    font-family: var(--font-bebas);
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    padding: 1rem 3rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(230,57,70,0.4);
+    animation: yesPulse 2s ease-in-out infinite;
+}
+
+@keyframes yesPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(230,57,70,0.4); }
+    50% { box-shadow: 0 0 40px rgba(230,57,70,0.8); }
+}
+
+.btn-yes:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(230,57,70,0.8);
+}
+
+.btn-convince {
+    font-family: var(--font-bebas);
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    padding: 0.8rem 2rem;
+    background: transparent;
+    color: var(--secondary);
+    border: 2px solid var(--secondary);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.btn-convince:hover {
+    background: rgba(244,162,97,0.1);
+}
+
+.convince-reasons {
+    margin-top: 1.5rem;
+    min-height: 2rem;
+}
+
+.convince-reason {
+    font-family: var(--font-hand);
+    font-size: 1.3rem;
+    color: var(--secondary);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUpFade 0.5s ease forwards;
+    margin-top: 0.5rem;
+}
+
+@keyframes slideUpFade {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Celebration */
+.celebration {
+    display: none;
+    margin-top: 2rem;
+}
+
+.celebration.active {
+    display: block;
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.celebration-title {
+    font-family: var(--font-metal);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--secondary);
+    text-shadow: 0 0 20px rgba(244,162,97,0.5);
+    margin-bottom: 1rem;
+}
+
+.celebration-message {
+    font-family: var(--font-hand);
+    font-size: 1.5rem;
+    color: var(--text);
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.6;
+}
+
+.celebration-quote {
+    opacity: 0.5;
+    margin-top: 1rem;
+}
+
+#celebration-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* ===================================================================
+   FOOTER
+   =================================================================== */
+#site-footer {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: var(--bg-deep);
+}
+
+.footer-secret {
+    font-family: var(--font-hand);
+    font-size: 0.9rem;
+    color: var(--text);
+    opacity: 0.04;
+}
+
+/* ===================================================================
+   CUSTOM CONTEXT MENU (Easter Egg #13)
+   =================================================================== */
+.context-menu {
+    position: fixed;
+    background: #1a1a2e;
+    border: 1px solid var(--primary);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    z-index: 10001;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+.context-menu.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.context-menu p {
+    font-family: var(--font-hand);
+    font-size: 1.1rem;
+    color: var(--secondary);
+    white-space: nowrap;
+}
+
+/* ===================================================================
+   KONAMI CODE OVERLAY (Easter Egg #14)
+   =================================================================== */
+.konami-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.konami-overlay.active {
+    opacity: 1;
+    background: linear-gradient(
+        45deg,
+        var(--primary),
+        var(--secondary),
+        var(--tertiary),
+        var(--primary),
+        var(--secondary)
+    );
+    background-size: 400% 400%;
+    animation: konamiLights 0.5s ease infinite;
+}
+
+@keyframes konamiLights {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.konami-text {
+    font-family: var(--font-metal);
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: white;
+    text-shadow: 0 0 20px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+/* ===================================================================
+   AIRPLANE (Easter Egg #3)
+   =================================================================== */
+.airplane {
+    position: fixed;
+    top: 30%;
+    right: -50px;
+    font-size: 2rem;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transition: none;
+}
+
+.airplane.flying {
+    opacity: 1;
+    animation: flyAcross 3s linear forwards;
+}
+
+@keyframes flyAcross {
+    from { right: -50px; transform: scaleX(-1); }
+    to { right: calc(100vw + 50px); transform: scaleX(-1); }
+}
+
+/* Page shake (Easter Egg #4) */
+.page-shake {
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10% { transform: translateX(-8px); }
+    20% { transform: translateX(8px); }
+    30% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    50% { transform: translateX(-4px); }
+    60% { transform: translateX(4px); }
+    70% { transform: translateX(-2px); }
+    80% { transform: translateX(2px); }
+}
+
+/* Lightning flash (Easter Egg #4) */
+.lightning-flash {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: white;
+    z-index: 9999;
+    pointer-events: none;
+    animation: flashOut 0.3s ease forwards;
+}
+
+@keyframes flashOut {
+    from { opacity: 0.8; }
+    to { opacity: 0; }
+}
+
+/* ===================================================================
+   VINYL NAVIGATOR
+   =================================================================== */
+#vinyl-nav {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9990;
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+#vinyl-nav:hover {
+    opacity: 1;
+}
+
+.vinyl-record {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        #333 15%,
+        #111 16%,
+        #1a1a1a 30%,
+        #111 31%,
+        #1a1a1a 45%,
+        #111 46%,
+        #1a1a1a 60%,
+        #111 61%,
+        #1a1a1a 75%,
+        #111 76%,
+        #1a1a1a 90%,
+        #111 91%
+    );
+    border: 2px solid #333;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vinyl-label {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    font-family: var(--font-mono);
+    font-size: 3px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.1;
+    z-index: 1;
+}
+
+.vinyl-tonearm {
+    position: absolute;
+    width: 35px;
+    height: 2px;
+    background: #666;
+    top: 10px;
+    right: -5px;
+    transform-origin: right center;
+    transform: rotate(-30deg);
+    border-radius: 1px;
+}
+
+.vinyl-tooltip {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background: #1a1a1a;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    margin-bottom: 8px;
+}
+
+#vinyl-nav:hover .vinyl-tooltip {
+    opacity: 1;
+}
+
+/* ===================================================================
+   WRISTBAND
+   =================================================================== */
+#wristband {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9990;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 6px;
+    background: linear-gradient(to bottom, #2a1a1a, #1a1a2a);
+    border-right: 2px solid #333;
+    border-radius: 0 4px 4px 0;
+}
+
+.stamp {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid #444;
+    background: transparent;
+    transition: all 0.5s ease;
+}
+
+.stamp.collected {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 6px rgba(230,57,70,0.5);
+}
+
+/* ===================================================================
+   PARTICLES CANVAS (global)
+   =================================================================== */
+#particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9997;
+}
+
+/* ===================================================================
+   RESPONSIVE
+   =================================================================== */
+@media (max-width: 1200px) {
+    .album-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .album-grid {
+        grid-template-columns: 1fr;
+        max-width: 280px;
+    }
+
+    .tour-date {
+        grid-template-columns: 1fr;
+        gap: 0.3rem;
+    }
+
+    .ticket-front {
+        flex-direction: column;
+    }
+
+    .ticket-perforation {
+        display: none;
+    }
+
+    .ticket-stub-side {
+        width: 100%;
+        border-left: none;
+        border-top: 2px dashed #333;
+        flex-direction: row;
+        gap: 1rem;
+    }
+
+    .ticket-stub-text {
+        transform: none;
+    }
+
+    .pass-card {
+        width: 280px;
+        min-height: 360px;
+    }
+
+    .guitar-strings {
+        gap: 20px;
+    }
+
+    .guitar-string {
+        height: 6px !important;
+    }
+
+    #wristband {
+        display: none;
+    }
+
+    #vinyl-nav {
+        width: 60px;
+        height: 60px;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .vinyl-record {
+        width: 60px;
+        height: 60px;
+    }
+
+    .encore-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* ===================================================================
+   REDUCED MOTION
+   =================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .neon-flicker {
+        animation: none;
+        opacity: 1;
+    }
+
+    .guitar-string.vibrating {
+        animation: none;
+    }
+}
