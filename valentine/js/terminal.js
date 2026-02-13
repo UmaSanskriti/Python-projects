@@ -722,35 +722,84 @@
     startReveal();
   }
 
+  // ── Photo Montage ────────────────────────────────────────────────
+
+  const photos = [
+    'images/1.jpg',
+    'images/2.jpg',
+    'images/3.jpg',
+    'images/4.jpg',
+    'images/5.jpg',
+  ];
+
+  async function playMontage() {
+    const montage = document.getElementById('montage-screen');
+    const img = document.getElementById('montage-img');
+
+    montage.classList.remove('hidden');
+
+    for (let i = 0; i < photos.length; i++) {
+      img.classList.remove('visible', 'fade-out');
+      img.src = photos[i];
+
+      // Wait for image to load before showing
+      await new Promise((resolve) => {
+        if (img.complete && img.naturalWidth > 0) {
+          resolve();
+        } else {
+          img.onload = resolve;
+          img.onerror = resolve;
+        }
+      });
+
+      // Fade in
+      await sleep(100);
+      img.classList.add('visible');
+
+      // Hold
+      await sleep(3000);
+
+      // Fade out
+      img.classList.add('fade-out');
+      await sleep(800);
+    }
+
+    // Fade out montage screen
+    montage.style.transition = 'opacity 1s ease';
+    montage.style.opacity = '0';
+    await sleep(1000);
+    montage.classList.add('hidden');
+  }
+
   // ── Reveal ─────────────────────────────────────────────────────────
 
-  function startReveal() {
+  async function startReveal() {
     // Fade out terminal
     $termScreen.style.transition = 'opacity 1.5s ease';
     $termScreen.style.opacity = '0';
+    await sleep(1500);
+    $termScreen.classList.add('hidden');
 
-    setTimeout(() => {
-      $termScreen.classList.add('hidden');
-      $reveal.classList.remove('hidden');
-      startHeartsCanvas();
+    // Play photo montage
+    await playMontage();
+    await sleep(500);
 
-      setTimeout(() => {
-        const msg = document.getElementById('reveal-message');
-        msg.innerHTML = 'You swiped right and my whole world started making sense.<span class="valentine-question">Will you be my Valentine?</span>';
-        msg.classList.add('visible');
+    // Show valentine question
+    $reveal.classList.remove('hidden');
+    startHeartsCanvas();
 
-        setTimeout(() => {
-          const btns = document.getElementById('reveal-buttons');
-          btns.classList.remove('hidden');
-          // Position the no button
-          const noBtn = document.getElementById('btn-no');
-          noBtn.style.position = 'relative';
-          setTimeout(() => {
-            btns.classList.add('visible');
-          }, 50);
-        }, 1500);
-      }, 500);
-    }, 1500);
+    await sleep(500);
+    const msg = document.getElementById('reveal-message');
+    msg.innerHTML = 'You swiped right and my whole world started making sense.<span class="valentine-question">Will you be my Valentine?</span>';
+    msg.classList.add('visible');
+
+    await sleep(1500);
+    const btns = document.getElementById('reveal-buttons');
+    btns.classList.remove('hidden');
+    const noBtn = document.getElementById('btn-no');
+    noBtn.style.position = 'relative';
+    await sleep(50);
+    btns.classList.add('visible');
   }
 
   // ── Hearts Canvas ──────────────────────────────────────────────────
