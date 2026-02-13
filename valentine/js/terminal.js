@@ -259,17 +259,13 @@
 
   let ytPlayer = null;
   let ytReady = false;
+  let musicPending = false;  // retry flag if cued before player ready
 
-  (function loadYT() {
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    document.head.appendChild(tag);
-  })();
-
+  // 1) Define callback BEFORE loading the API script
   window.onYouTubeIframeAPIReady = function () {
     ytPlayer = new YT.Player('yt-player', {
-      width: '1',
-      height: '1',
+      width: '256',
+      height: '144',
       videoId: 'lUPltG1hb3k',
       playerVars: {
         autoplay: 0,
@@ -278,18 +274,36 @@
         rel: 0,
         loop: 1,
         playlist: 'lUPltG1hb3k',
+        enablejsapi: 1,
       },
       events: {
-        onReady: function () {
+        onReady: function (e) {
           ytReady = true;
-          ytPlayer.setVolume(50);
+          e.target.setVolume(100);
+          // Add autoplay permission to the iframe
+          var iframe = e.target.getIframe();
+          if (iframe) iframe.setAttribute('allow', 'autoplay; encrypted-media');
+          // If music was requested before player was ready, play now
+          if (musicPending) { try { e.target.playVideo(); } catch (_) {} }
         },
       },
     });
   };
 
+  // 2) Load the API script (uses YouTube's documented pattern)
+  (function () {
+    var tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    var first = document.getElementsByTagName('script')[0];
+    first.parentNode.insertBefore(tag, first);
+  })();
+
   function cueMusic() {
-    try { if (ytReady) ytPlayer.playVideo(); } catch (_) { /* no-op */ }
+    if (ytReady && ytPlayer) {
+      try { ytPlayer.playVideo(); } catch (_) {}
+    } else {
+      musicPending = true; // play as soon as player is ready
+    }
   }
 
   // ── Helpers ────────────────────────────────────────────────────────
