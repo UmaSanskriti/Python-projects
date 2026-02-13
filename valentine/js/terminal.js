@@ -739,6 +739,31 @@
     'images/9.jpg',
   ];
 
+  const flashLabels = [
+    'first_swipe.jpg',
+    'first_date.jpg',
+    'tokyo_nights.jpg',
+    'laughing.jpg',
+    'golden_hour.jpg',
+    'rooftop.jpg',
+    'adventure.jpg',
+    'candid.jpg',
+    'always.jpg',
+  ];
+
+  // Scattered positions ringing the center content
+  const tilePositions = [
+    { left: '2%',   top: '3%',   rot: '-3.5deg', dur: '9s'  },
+    { left: '30%',  top: '0%',   rot: '2deg',    dur: '11s' },
+    { left: '66%',  top: '3%',   rot: '-1.5deg', dur: '8s'  },
+    { left: '85%',  top: '28%',  rot: '3deg',    dur: '10s' },
+    { left: '82%',  top: '63%',  rot: '-2.5deg', dur: '9s'  },
+    { left: '55%',  top: '83%',  rot: '1.5deg',  dur: '12s' },
+    { left: '18%',  top: '82%',  rot: '-2deg',   dur: '10s' },
+    { left: '-1%',  top: '58%',  rot: '2.5deg',  dur: '8s'  },
+    { left: '0%',   top: '25%',  rot: '-1.5deg', dur: '11s' },
+  ];
+
   function loadImage(src) {
     return new Promise((resolve) => {
       const testImg = new Image();
@@ -749,83 +774,90 @@
     });
   }
 
-  async function playMontage() {
-    const results = await Promise.all(photos.map((src) => loadImage(src)));
-    const validPhotos = photos.filter((_, i) => results[i]);
-    if (validPhotos.length === 0) return;
-
+  // ── Terminal-framed rapid-fire flash montage ──
+  async function playFlashMontage(validPhotos) {
     const montage = document.getElementById('montage-screen');
     const flash = document.getElementById('montage-flash');
-    const grid = document.getElementById('montage-grid');
     montage.classList.remove('hidden');
 
-    // ── Phase 1: Rapid-fire flashes (accelerating) ──
-    // Pre-create all flash images
-    const flashImgs = validPhotos.map((src) => {
+    // Build terminal-window frames
+    const frames = validPhotos.map((src, i) => {
+      const frame = document.createElement('div');
+      frame.className = 'flash-frame';
+      const label = flashLabels[i] || String(i + 1).padStart(3, '0') + '.jpg';
+      frame.innerHTML =
+        '<div class="flash-bar">' +
+          '<span class="flash-dots"><i></i><i></i><i></i></span>' +
+          '<span class="flash-cmd"><span class="prompt-char">$</span> cat ~/us/' + label + '</span>' +
+        '</div>';
       const img = document.createElement('img');
       img.src = src;
-      flash.appendChild(img);
-      return img;
+      frame.appendChild(img);
+      flash.appendChild(frame);
+      return frame;
     });
 
-    // Timings: start slow, accelerate — like a heartbeat rising
-    const holdTimes = [];
-    const total = flashImgs.length;
-    for (let i = 0; i < total; i++) {
-      const t = Math.round(550 - (i / (total - 1)) * 350); // 550ms → 200ms
-      holdTimes.push(t);
-    }
+    // Accelerating hold times: 550ms → 200ms
+    const total = frames.length;
+    const holdTimes = frames.map((_, i) =>
+      Math.round(550 - (i / Math.max(total - 1, 1)) * 350)
+    );
 
-    for (let i = 0; i < flashImgs.length; i++) {
-      // Flash previous out
+    // Rapid-fire sequence
+    for (let i = 0; i < frames.length; i++) {
       if (i > 0) {
-        flashImgs[i - 1].classList.remove('flash-in');
-        flashImgs[i - 1].classList.add('flash-out');
+        frames[i - 1].classList.remove('flash-in');
+        frames[i - 1].classList.add('flash-out');
       }
-      // Flash current in
       await sleep(30);
-      flashImgs[i].classList.add('flash-in');
-      // Hold
+      frames[i].classList.add('flash-in');
       await sleep(holdTimes[i]);
     }
 
-    // Flash out last image
-    flashImgs[flashImgs.length - 1].classList.remove('flash-in');
-    flashImgs[flashImgs.length - 1].classList.add('flash-out');
+    // Flash out last frame
+    frames[frames.length - 1].classList.remove('flash-in');
+    frames[frames.length - 1].classList.add('flash-out');
 
-    // ── White flash transition ──
-    await sleep(80);
+    // White flash → dissolve
+    await sleep(60);
     montage.classList.add('white-flash');
-    await sleep(120);
-    flash.style.display = 'none';
-    montage.classList.remove('white-flash');
+    await sleep(150);
+    montage.style.transition = 'opacity 0.4s ease';
+    montage.style.opacity = '0';
+    await sleep(400);
+    montage.classList.add('hidden');
+  }
 
-    // ── Phase 2: 3×3 grid — all photos snap in ──
-    const gridImgs = validPhotos.map((src, i) => {
+  // ── Scatter photos as floating tiles on reveal screen ──
+  async function scatterRevealPhotos(validPhotos) {
+    const container = document.getElementById('reveal-photos');
+
+    const tiles = validPhotos.map((src, i) => {
+      const pos = tilePositions[i % tilePositions.length];
+      const tile = document.createElement('div');
+      tile.className = 'reveal-tile';
+      tile.style.left = pos.left;
+      tile.style.top = pos.top;
+      tile.style.setProperty('--rot', pos.rot);
+      tile.style.setProperty('--dur', pos.dur);
+      const label = flashLabels[i] || String(i + 1).padStart(3, '0') + '.jpg';
+      tile.innerHTML = '<div class="tile-label">~/us/' + label + '</div>';
       const img = document.createElement('img');
       img.src = src;
-      // Random slight rotation for visual interest
-      img.style.setProperty('--r', String((Math.random() - 0.5) * 8));
-      grid.appendChild(img);
-      return img;
+      tile.appendChild(img);
+      container.appendChild(tile);
+      return tile;
     });
 
-    grid.classList.add('visible');
-
-    // Staggered pop-in: each photo snaps in ~60ms apart
-    for (let i = 0; i < gridImgs.length; i++) {
-      await sleep(60);
-      gridImgs[i].classList.add('pop-in');
+    // Staggered pop-in
+    for (let i = 0; i < tiles.length; i++) {
+      await sleep(100);
+      tiles[i].classList.add('settled');
     }
 
-    // Hold the grid for a beat
-    await sleep(1200);
-
-    // Fade out montage
-    montage.style.transition = 'opacity 0.8s ease';
-    montage.style.opacity = '0';
-    await sleep(800);
-    montage.classList.add('hidden');
+    // Start gentle floating after all tiles settle
+    await sleep(600);
+    tiles.forEach(function (tile) { tile.classList.add('floating'); });
   }
 
   // ── Reveal ─────────────────────────────────────────────────────────
@@ -838,24 +870,38 @@
       await sleep(1500);
       $termScreen.classList.add('hidden');
 
-      // Play photo montage (skips gracefully if no photos)
-      await playMontage();
-      await sleep(500);
+      // Pre-check which photos exist
+      const results = await Promise.all(photos.map(function (src) { return loadImage(src); }));
+      const validPhotos = photos.filter(function (_, i) { return results[i]; });
+
+      // Play terminal-framed flash montage
+      if (validPhotos.length > 0) {
+        await playFlashMontage(validPhotos);
+      }
+
+      // Show reveal screen
+      $reveal.classList.remove('hidden');
+      startHeartsCanvas();
+
+      // Scatter photos as floating tiles on reveal screen
+      if (validPhotos.length > 0) {
+        await scatterRevealPhotos(validPhotos);
+      }
     } catch (_) {
-      // Ensure we always get to the reveal even if montage errors
+      // Always get to the reveal even if montage errors
       $termScreen.classList.add('hidden');
       document.getElementById('montage-screen').classList.add('hidden');
+      $reveal.classList.remove('hidden');
+      startHeartsCanvas();
     }
 
-    // Show valentine question — always reaches here
-    $reveal.classList.remove('hidden');
-    startHeartsCanvas();
-
-    await sleep(500);
+    // Show Valentine question
+    await sleep(400);
     const msg = document.getElementById('reveal-message');
     msg.innerHTML = 'You swiped right and my whole world started making sense.<span class="valentine-question">Will you be my Valentine?</span>';
     msg.classList.add('visible');
 
+    // Show buttons
     await sleep(1500);
     const btns = document.getElementById('reveal-buttons');
     btns.classList.remove('hidden');
