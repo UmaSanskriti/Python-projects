@@ -483,6 +483,9 @@
         }
         addBlank();
         addStyledLines(gitShowData);
+        // This is THE trigger — collect all fragments and launch reveal
+        unlockFragment(1);
+        unlockFragment(2);
         unlockFragment(3);
       } else if (sub === 'status') {
         addBlank();
