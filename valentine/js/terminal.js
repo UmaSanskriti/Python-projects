@@ -30,15 +30,15 @@
         'README.md': {
           _t: 'f',
           _c: [
-            { t: 'white', s: '# Hey Manas' },
+            { t: 'white', s: '# Hey you.' },
             { t: '', s: '' },
-            { t: '', s: 'Someone left you a message on this system.' },
-            { t: '', s: 'But it\'s encrypted — split into 3 fragments.' },
+            { t: '', s: '3 fragments. Scattered.' },
             { t: '', s: '' },
-            { t: 'dim', s: 'Fragments found: [see counter above]' },
+            { t: 'accent', s: 'One in the logs.' },
+            { t: 'accent', s: 'One in the code.' },
+            { t: 'accent', s: 'One in the commit history.' },
             { t: '', s: '' },
-            { t: 'accent', s: 'Explore the file system. Run scripts. Check git.' },
-            { t: 'dim', s: 'Start with:  ls' },
+            { t: 'dim', s: 'Find them all.' },
           ],
         },
         memories: {
@@ -340,6 +340,13 @@
       el.textContent = '♥';
       el.classList.add('found');
     }
+    // After finding 2 fragments, nudge toward git if fragment 3 is still missing
+    if (state.fragments.size === 2 && !state.fragments.has(3)) {
+      setTimeout(() => {
+        addLine('[SYSTEM] 2/3 found. Have you checked the commit history?', 'dim');
+        scrollToBottom();
+      }, 800);
+    }
     if (state.fragments.size === 3) {
       setTimeout(() => triggerAssembly(), 1500);
     }
@@ -360,8 +367,6 @@
       addLine('  git show <hash> view a commit', 'accent');
       addLine('  pwd             where am I?', 'accent');
       addLine('  clear           clear terminal', 'accent');
-      addBlank();
-      addLine('Hint: start by looking around. Try \'ls\'', 'dim');
     },
 
     ls(args) {
@@ -485,7 +490,6 @@
         addLine('Your heart is up to date with \'origin/love\'.', '');
         addBlank();
         addLine('nothing to commit, working tree clean', 'dim');
-        addLine('(but there\'s something to ask...)', 'dim');
       } else if (sub === 'blame') {
         addLine('All blame goes to Bumble. And destiny.', 'accent');
       } else {
@@ -550,7 +554,6 @@
     make(args) {
       if (args[0] === 'love') {
         addLine('make: *** Permission granted.', 'green');
-        addLine('But find the fragments first.', 'dim');
       } else {
         addLine(`make: *** No rule to make target '${args[0] || ''}'. Stop.`, 'red');
       }
@@ -566,7 +569,6 @@
 
     exit() {
       addLine('There\'s no exit from love.', 'pink');
-      addLine('(But there is \'help\')', 'dim');
     },
 
     quit() {
@@ -647,8 +649,7 @@
 
     if (found < 3) {
       addBlank();
-      addLine('Collect all 3 fragments to decrypt.', 'dim');
-      addLine('Explore memories, run projects, check git history.', 'dim');
+      addLine(`${3 - found} fragment${3 - found > 1 ? 's' : ''} remaining.`, 'dim');
     }
   }
 
@@ -936,8 +937,7 @@
       { text: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', cls: 'boot-system', delay: 100 },
       { text: '', cls: '', delay: 50 },
       { text: ' Hey Manas.', cls: 'boot-white', delay: 400 },
-      { text: ' Someone left you a message on this system.', cls: 'boot-white', delay: 300 },
-      { text: ' But it\'s locked behind 3 fragments.', cls: 'boot-accent', delay: 300 },
+      { text: ' Something\'s waiting for you here.', cls: 'boot-white', delay: 300 },
       { text: '', cls: '', delay: 100 },
       { text: ' Type \'help\' to start.', cls: 'boot-system', delay: 200 },
       { text: '', cls: '', delay: 50 },
@@ -988,9 +988,6 @@
         state.inputEnabled = true;
         $input.focus();
 
-        // Welcome lines in terminal
-        addLine('Welcome to HEART.OS. Type \'help\' for commands.', 'dim');
-        addLine('Fragments: explore files, run scripts, check git.', 'dim');
         addBlank();
       });
     }, 800);
