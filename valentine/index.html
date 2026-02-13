@@ -1,484 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE ETERNAL TOUR</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Bebas+Neue&family=Oswald:wght@300;400;600&family=Caveat:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>HEART.OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Scanline overlay -->
+  <div id="scanlines"></div>
 
-    <!-- ==================== PERSISTENT UI ==================== -->
+  <!-- Boot Screen -->
+  <div id="boot-screen">
+    <div id="boot-text"></div>
+  </div>
 
-    <!-- Vinyl Navigator (fixed bottom-right) -->
-    <div id="vinyl-nav" aria-hidden="true">
-        <div class="vinyl-record">
-            <div class="vinyl-grooves"></div>
-            <div class="vinyl-label">THE ETERNAL TOUR</div>
-        </div>
-        <div class="vinyl-tonearm"></div>
-        <div class="vinyl-tooltip"></div>
+  <!-- Terminal Screen -->
+  <div id="terminal-screen" class="hidden">
+    <div id="fragment-counter">
+      <span class="frag" id="frag-1">_</span>
+      <span class="frag" id="frag-2">_</span>
+      <span class="frag" id="frag-3">_</span>
     </div>
-
-    <!-- Concert Wristband (fixed left edge) -->
-    <div id="wristband" aria-hidden="true">
-        <div class="stamp" data-section="0"></div>
-        <div class="stamp" data-section="1"></div>
-        <div class="stamp" data-section="2"></div>
-        <div class="stamp" data-section="3"></div>
-        <div class="stamp" data-section="4"></div>
-        <div class="stamp" data-section="5"></div>
-        <div class="stamp" data-section="6"></div>
-        <div class="stamp" data-section="7"></div>
+    <div id="terminal">
+      <div id="output"></div>
+      <div id="input-line">
+        <span id="prompt">manas@heart:~$&nbsp;</span>
+        <input type="text" id="cmd" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      </div>
     </div>
+  </div>
 
-    <!-- Canvas for particles (embers, confetti, etc.) -->
-    <canvas id="particles-canvas"></canvas>
-
-    <!-- ==================== SECTION 0: SOUNDCHECK (Hero) ==================== -->
-    <section id="soundcheck" class="section" data-section="0">
-        <div class="spotlight"></div>
-        <h1 class="hero-title neon-flicker">THE ETERNAL TOUR</h1>
-        <p class="hero-subtitle">A World Tour in 7 Acts</p>
-        <p class="hero-quote lyric-quote">"It's been a long time since I rock and rolled..."<span class="lyric-attr"> — Led Zeppelin</span></p>
-        <div class="scroll-prompt">
-            <span>ENTER THE PIT</span>
-            <span class="arrow-bounce">↓</span>
-        </div>
-    </section>
-
-    <!-- ==================== SECTION 1: BACKSTAGE PASS ==================== -->
-    <section id="backstage-pass" class="section" data-section="1">
-        <div class="section-inner">
-            <div class="lanyard"></div>
-            <div class="pass-card">
-                <div class="pass-holographic"></div>
-                <div class="pass-content">
-                    <div class="pass-header">VIP ALL ACCESS</div>
-                    <div class="pass-id" id="pass-number">#140324</div>
-                    <div class="pass-avatar">
-                        <div class="silhouette"></div>
-                    </div>
-                    <div class="pass-name">MANAS</div>
-                    <div class="pass-tour">THE ETERNAL TOUR</div>
-                </div>
-            </div>
-            <p class="pass-description">This pass grants the holder unlimited access to THE ETERNAL TOUR — a retrospective of the greatest show never staged.</p>
-            <p class="lyric-quote faint-lyric">"All you need is love." — Beatles</p>
-        </div>
-    </section>
-
-    <!-- ==================== SECTION 2: TOUR DATES ==================== -->
-    <section id="tour-dates" class="section" data-section="2">
-        <div class="section-inner">
-            <div class="poster">
-                <h2 class="poster-title">TOUR DATES</h2>
-                <div class="poster-subtitle">THE ETERNAL TOUR — WORLD TOUR 2024-2026</div>
-                <div class="tour-list">
-                    <div class="tour-date" data-animate>
-                        <span class="date">MAR 14</span>
-                        <span class="city" id="tokyo-city">TOKYO, JAPAN</span>
-                        <span class="venue">The Bumble Arena</span>
-                        <span class="sold-out">SOLD OUT</span>
-                    </div>
-                    <div class="tour-date" data-animate>
-                        <span class="date">MAY 28</span>
-                        <span class="city">SINGAPORE</span>
-                        <span class="venue">First Encounter Stadium</span>
-                        <span class="sold-out">SOLD OUT</span>
-                    </div>
-                    <div class="tour-date" data-animate>
-                        <span class="date">MAY 30</span>
-                        <span class="city">SINGAPORE</span>
-                        <span class="venue" id="beautiful-night">The Beautiful Night Club</span>
-                        <span class="sold-out">SOLD OUT</span>
-                    </div>
-                    <div class="tour-date" data-animate>
-                        <span class="date">JUN 05</span>
-                        <span class="city">SINGAPORE</span>
-                        <span class="venue">The Official Coliseum</span>
-                        <span class="sold-out">SOLD OUT</span>
-                    </div>
-                    <div class="tour-date" data-animate>
-                        <span class="date">JUL 19</span>
-                        <span class="city">SINGAPORE</span>
-                        <span class="venue">The Forever Amphitheatre</span>
-                        <span class="sold-out">SOLD OUT</span>
-                    </div>
-                    <div class="tour-date" data-animate>
-                        <span class="date">SEPT 2026</span>
-                        <span class="city">SAME COUNTRY</span>
-                        <span class="venue">The Reunion Arena</span>
-                        <span class="sold-out">SOLD OUT</span>
-                    </div>
-                    <div class="tour-date tonight" data-animate>
-                        <span class="date">FEB 14, 2026</span>
-                        <span class="city">YOUR HEART</span>
-                        <span class="venue">The Grand Finale Dome</span>
-                        <span class="tonight-badge">TONIGHT</span>
-                    </div>
-                </div>
-                <p class="poster-quote">"We'll be riding the highway to hell... together."</p>
-            </div>
-            <!-- Easter egg 2: starry night overlay -->
-            <div id="starry-night-overlay" class="hidden-overlay">
-                <p class="starry-text">"That was the most beautiful night of my life."</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== SECTION 3: THE SETLIST ==================== -->
-    <section id="setlist" class="section" data-section="3">
-        <div class="section-inner">
-            <div class="setlist-paper">
-                <div class="tape"></div>
-                <div class="setlist-content">
-                    <div class="setlist-header">SETLIST — THE ETERNAL TOUR</div>
-                    <div class="setlist-divider">═══════════════════════════</div>
-                    <ol class="setlist-songs">
-                        <li class="song" data-animate>Swipe Right in Tokyo</li>
-                        <li class="song" data-animate>First Date Butterflies <span class="song-note">(Extended Mix)</span></li>
-                        <li class="song" data-animate id="thunder-song">Three Days of Thunder ⚡</li>
-                        <li class="song" data-animate>Making It Official <span class="song-note">(The June 5th Anthem)</span></li>
-                        <li class="song" data-animate>Building Our Kingdom <span class="song-note">(Singapore Sessions)</span></li>
-                        <li class="song" data-animate>The Ring <span class="song-note">(Acoustic)</span></li>
-                        <li class="song" data-animate id="ocean-song">Ocean Apart <span class="song-note">(The Wharton Blues)</span></li>
-                        <li class="song" data-animate>Counting Down the Days</li>
-                        <li class="song" data-animate>Same Country, Same Sky <span class="song-note">(2026 Remix)</span></li>
-                    </ol>
-                    <div class="setlist-divider">────────────────────────</div>
-                    <div class="song encore-song" data-animate>10. BE MY VALENTINE — THE ENCORE</div>
-                </div>
-                <!-- Easter egg 5: teardrop -->
-                <div id="teardrop" class="teardrop"></div>
-            </div>
-            <p class="lyric-quote section-quote">"So close, no matter how far..." — Metallica, "Nothing Else Matters"</p>
-        </div>
-    </section>
-
-    <!-- ==================== SECTION 4: THE DISCOGRAPHY ==================== -->
-    <section id="discography" class="section" data-section="4">
-        <div class="section-inner">
-            <h2 class="section-title">THE DISCOGRAPHY</h2>
-            <div class="album-grid">
-                <!-- Album 1: SWIPE RIGHT -->
-                <div class="album-card" data-animate>
-                    <div class="album-inner">
-                        <div class="album-front album-swipe-right">
-                            <div class="album-art">
-                                <div class="hexagon"></div>
-                                <div class="lightning-bolt"></div>
-                            </div>
-                            <div class="album-title">"SWIPE RIGHT"</div>
-                            <div class="album-date">Mar 2024</div>
-                        </div>
-                        <div class="album-back">
-                            <div class="liner-notes">
-                                <div class="review-stars">★★★★★</div>
-                                <p>"A debut that rewrote the rules. Who knew a single swipe could launch a world tour?"</p>
-                                <span class="review-source">— Rolling Stone</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Album 2: FIRST CONTACT -->
-                <div class="album-card" data-animate>
-                    <div class="album-inner">
-                        <div class="album-front album-first-contact">
-                            <div class="album-art">
-                                <div class="spotlight-circle left"></div>
-                                <div class="spotlight-circle right"></div>
-                            </div>
-                            <div class="album-title">"FIRST CONTACT"</div>
-                            <div class="album-date">May 2024</div>
-                        </div>
-                        <div class="album-back">
-                            <div class="liner-notes">
-                                <div class="review-stars">★★★★★</div>
-                                <p>"Two worlds collide in a symphony of sparks. Instant classic."</p>
-                                <span class="review-source">— Q Magazine</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Album 3: THREE DAYS OF THUNDER -->
-                <div class="album-card" data-animate>
-                    <div class="album-inner">
-                        <div class="album-front album-thunder">
-                            <div class="album-art">
-                                <div class="bolt bolt-1"></div>
-                                <div class="bolt bolt-2"></div>
-                                <div class="bolt bolt-3"></div>
-                            </div>
-                            <div class="album-title">"THREE DAYS OF THUNDER"</div>
-                            <div class="album-date">May–Jun 2024</div>
-                        </div>
-                        <div class="album-back">
-                            <div class="liner-notes">
-                                <div class="review-stars">★★★★★</div>
-                                <p>"Raw. Unhinged. Three days that changed the genre forever."</p>
-                                <span class="review-source">— NME</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Album 4: OFFICIAL -->
-                <div class="album-card" data-animate>
-                    <div class="album-inner">
-                        <div class="album-front album-official">
-                            <div class="album-art">
-                                <div class="stamp-text">OFFICIAL</div>
-                            </div>
-                            <div class="album-title">"OFFICIAL"</div>
-                            <div class="album-date">Jun 5, 2024</div>
-                        </div>
-                        <div class="album-back">
-                            <div class="liner-notes">
-                                <div class="review-stars">★★★★★</div>
-                                <p>"The paperwork is signed, the deal is sealed. A power move."</p>
-                                <span class="review-source">— Kerrang!</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Album 5: HOME -->
-                <div class="album-card" data-animate>
-                    <div class="album-inner">
-                        <div class="album-front album-home">
-                            <div class="album-art">
-                                <div class="skyline">
-                                    <div class="building b1"></div>
-                                    <div class="building b2"></div>
-                                    <div class="building b3"></div>
-                                    <div class="building b4"></div>
-                                    <div class="building b5"></div>
-                                </div>
-                                <div class="warm-window"></div>
-                            </div>
-                            <div class="album-title">"HOME"</div>
-                            <div class="album-date">2024</div>
-                        </div>
-                        <div class="album-back">
-                            <div class="liner-notes">
-                                <div class="review-stars">★★★★★</div>
-                                <p>"Home isn't a place — it's a person. This album proves it."</p>
-                                <span class="review-source">— The Guardian</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Album 6: THE RING -->
-                <div class="album-card" data-animate id="ring-album">
-                    <div class="album-inner">
-                        <div class="album-front album-ring">
-                            <div class="album-art">
-                                <div class="golden-ring"></div>
-                            </div>
-                            <div class="album-title">"THE RING"</div>
-                            <div class="album-date">Jul 19</div>
-                        </div>
-                        <div class="album-back">
-                            <div class="liner-notes">
-                                <div class="review-stars">★★★★★</div>
-                                <p>"The purest note ever struck. Platinum on arrival."</p>
-                                <span class="review-source">— Pitchfork</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Album 7: OCEAN APART -->
-                <div class="album-card" data-animate>
-                    <div class="album-inner">
-                        <div class="album-front album-ocean">
-                            <div class="album-art">
-                                <div class="ocean-split">
-                                    <div class="warm-side"></div>
-                                    <div class="cool-side"></div>
-                                </div>
-                                <div class="soundwave"></div>
-                            </div>
-                            <div class="album-title">"OCEAN APART"</div>
-                            <div class="album-date">2025–2026</div>
-                        </div>
-                        <div class="album-back">
-                            <div class="liner-notes">
-                                <div class="review-stars">★★★★☆</div>
-                                <p>"Heart-wrenching. The distance only made the harmonies richer."</p>
-                                <span class="review-source">— Billboard</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Album 8: REUNION TOUR -->
-                <div class="album-card" data-animate>
-                    <div class="album-inner">
-                        <div class="album-front album-reunion">
-                            <div class="album-art">
-                                <div class="converging-lights">
-                                    <div class="light-beam left-beam"></div>
-                                    <div class="light-beam right-beam"></div>
-                                    <div class="bright-point"></div>
-                                </div>
-                            </div>
-                            <div class="album-title">"REUNION TOUR"</div>
-                            <div class="album-date">Sept 2026</div>
-                        </div>
-                        <div class="album-back">
-                            <div class="liner-notes">
-                                <div class="review-stars">★★★★★</div>
-                                <p>"The comeback of the century. Every note screams 'I'm home.'"</p>
-                                <span class="review-source">— Consequence of Sound</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== SECTION 5: THE STAGE ==================== -->
-    <section id="the-stage" class="section" data-section="5">
-        <div class="stage-lights">
-            <div class="stage-light light-crimson"></div>
-            <div class="stage-light light-gold"></div>
-            <div class="stage-light light-violet"></div>
-            <div class="stage-light light-white"></div>
-        </div>
-        <div class="stage-content">
-            <h2 class="stage-text">FROM TOKYO TO SINGAPORE. FROM BUMBLE TO FOREVER. 22,000 MILES. ZERO REGRETS.</h2>
-            <div class="guitar-strings">
-                <div class="guitar-string" data-string="0" data-note="E2"></div>
-                <div class="guitar-string" data-string="1" data-note="A2"></div>
-                <div class="guitar-string" data-string="2" data-note="D3"></div>
-                <div class="guitar-string" data-string="3" data-note="G3"></div>
-                <div class="guitar-string" data-string="4" data-note="B3"></div>
-                <div class="guitar-string" data-string="5" data-note="E4"></div>
-            </div>
-            <p class="lyric-quote stage-quote">"Stairway to Heaven? Nah. Stairway to You."</p>
-        </div>
-        <canvas id="ember-canvas"></canvas>
-    </section>
-
-    <!-- ==================== HIDDEN BACKSTAGE DOOR (between sections 5 & 6) ==================== -->
-    <div id="backstage-door" class="backstage-door">
-        <div class="door-frame">
-            <div class="door-knob"></div>
-        </div>
+  <!-- Reveal Screen -->
+  <div id="reveal-screen" class="hidden">
+    <canvas id="hearts-canvas"></canvas>
+    <div id="reveal-content">
+      <p id="reveal-message"></p>
+      <div id="reveal-buttons" class="hidden">
+        <button id="btn-yes">Yes!</button>
+        <button id="btn-no">nah</button>
+      </div>
     </div>
-
-    <!-- Backstage Overlay -->
-    <div id="backstage-overlay" class="backstage-overlay">
-        <button class="backstage-close" aria-label="Close backstage">&times;</button>
-        <div class="lightbulb-container">
-            <div class="lightbulb-wire"></div>
-            <div class="lightbulb">
-                <div class="bulb-glow"></div>
-            </div>
-        </div>
-        <div class="backstage-letter">
-            <p>Behind every great show, there's a moment before the curtain rises where everything is quiet. This is that moment.</p>
-            <p>Before the lights, before the music, before the crowd — there's just us.</p>
-            <p>And honestly? That's the best part.</p>
-            <p>The show is great, but the quiet moments with you? That's the real tour.</p>
-            <p>I love you, Manas. Always have. Always will.</p>
-            <p class="backstage-signoff">Now get back out there — the encore is waiting.</p>
-        </div>
+    <div id="celebration" class="hidden">
+      <canvas id="confetti-canvas"></canvas>
+      <div id="celeb-text"></div>
     </div>
+  </div>
 
-    <!-- ==================== SECTION 6: THE TICKET STUB ==================== -->
-    <section id="ticket-stub" class="section" data-section="6">
-        <div class="section-inner">
-            <div class="ticket" id="the-ticket">
-                <div class="ticket-inner">
-                    <div class="ticket-front">
-                        <div class="ticket-perforation"></div>
-                        <div class="ticket-main">
-                            <div class="ticket-header">ADMIT ONE</div>
-                            <div class="ticket-event">THE ETERNAL TOUR — GRAND FINALE</div>
-                            <div class="ticket-details">
-                                <div class="ticket-row"><span class="ticket-label">VENUE:</span> <span class="ticket-value">YOUR HEART</span></div>
-                                <div class="ticket-row"><span class="ticket-label">DATE:</span> <span class="ticket-value">FEBRUARY 14, 2026</span></div>
-                                <div class="ticket-row">
-                                    <span><span class="ticket-label">SEAT:</span> <span class="ticket-value">FOREVER</span></span>
-                                    <span><span class="ticket-label">ROW:</span> <span class="ticket-value">ALWAYS</span></span>
-                                </div>
-                                <div class="ticket-row">
-                                    <span><span class="ticket-label">GATE:</span> <span class="ticket-value">LOVE</span></span>
-                                    <span><span class="ticket-label">PRICE:</span> <span class="ticket-value">PRICELESS</span></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="ticket-stub-side">
-                            <div class="ticket-stub-text">STUB</div>
-                            <div class="ticket-stub-id">#140324</div>
-                        </div>
-                    </div>
-                    <div class="ticket-back">
-                        <p class="ticket-back-text">"I wrote this on the back of the ticket so no one would see it. You're the best thing that ever happened to me. Every moment since March 14th has been the greatest show of my life."</p>
-                        <p class="ticket-back-sign">— Your biggest fan</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== SECTION 7: THE ENCORE ==================== -->
-    <section id="encore" class="section" data-section="7">
-        <div class="encore-overlay"></div>
-        <div class="encore-content">
-            <div class="encore-chant">EN-CORE!</div>
-            <div class="encore-spotlight"></div>
-            <h2 class="encore-name" id="encore-name">
-                <span class="letter" data-letter="M">M</span><span class="letter">A</span><span class="letter">N</span><span class="letter">A</span><span class="letter">S</span>
-            </h2>
-            <h3 class="encore-question">WILL YOU BE MY VALENTINE?</h3>
-            <div class="encore-buttons">
-                <button id="btn-hell-yes" class="btn-yes">HELL YES 🤘</button>
-                <button id="btn-convince" class="btn-convince">NEED MORE CONVINCING</button>
-            </div>
-            <div class="convince-reasons"></div>
-            <div class="celebration">
-                <h2 class="celebration-title">THE TOUR CONTINUES FOREVER.</h2>
-                <p class="celebration-message">I love you more than any song could say. Happy Valentine's Day, my forever headliner.</p>
-                <p class="celebration-quote lyric-quote">"And in the end, the love you take is equal to the love you make." — Beatles</p>
-            </div>
-        </div>
-        <canvas id="celebration-canvas"></canvas>
-    </section>
-
-    <!-- ==================== FOOTER ==================== -->
-    <footer id="site-footer">
-        <p class="footer-secret">P.S. You're the only person who would scroll this far. That's why I love you.</p>
-    </footer>
-
-    <!-- ==================== CUSTOM RIGHT-CLICK MENU ==================== -->
-    <div id="custom-context-menu" class="context-menu">
-        <p>Looking for secrets? You're warmer than you think. 🔥</p>
-    </div>
-
-    <!-- ==================== KONAMI CODE OVERLAY ==================== -->
-    <div id="konami-overlay" class="konami-overlay">
-        <p class="konami-text">I'd go into any mosh pit for you.</p>
-    </div>
-
-    <!-- Airplane for easter egg 3 -->
-    <div id="airplane" class="airplane">✈</div>
-
-    <!-- Scripts -->
-    <script src="js/particles.js"></script>
-    <script src="js/audio.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/easter-eggs.js"></script>
-    <script src="js/finale.js"></script>
+  <script src="js/terminal.js"></script>
 </body>
 </html>
