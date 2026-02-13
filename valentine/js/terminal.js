@@ -266,14 +266,14 @@
     ytPlayer = new YT.Player('yt-player', {
       width: '256',
       height: '144',
-      videoId: 'lUPltG1hb3k',
+      videoId: '-8C_2BBVWk8',
       playerVars: {
         autoplay: 0,
         controls: 0,
         disablekb: 1,
         rel: 0,
         loop: 1,
-        playlist: 'lUPltG1hb3k',
+        playlist: '-8C_2BBVWk8',
         enablejsapi: 1,
       },
       events: {
@@ -1074,7 +1074,7 @@
     startConfetti();
 
     const text = document.getElementById('celeb-text');
-    text.innerHTML = 'It\'s a date!<span class="celeb-sub">Happy Valentine\'s Day, Manas</span>';
+    text.innerHTML = 'No distance can change this.<span class="celeb-sub">Singapore to Philly — still yours. Happy Valentine\'s Day, Manas.</span>';
     setTimeout(() => text.classList.add('visible'), 300);
   }
 
