@@ -745,50 +745,86 @@
       testImg.onload = () => resolve(true);
       testImg.onerror = () => resolve(false);
       testImg.src = src;
-      // Safety timeout — never hang more than 5s per image
       setTimeout(() => resolve(false), 5000);
     });
   }
 
   async function playMontage() {
-    // Pre-check which photos actually exist
     const results = await Promise.all(photos.map((src) => loadImage(src)));
     const validPhotos = photos.filter((_, i) => results[i]);
-
-    // Skip montage entirely if no photos loaded
     if (validPhotos.length === 0) return;
 
     const montage = document.getElementById('montage-screen');
-    const img = document.getElementById('montage-img');
+    const flash = document.getElementById('montage-flash');
+    const grid = document.getElementById('montage-grid');
     montage.classList.remove('hidden');
 
-    for (const src of validPhotos) {
-      img.classList.remove('visible', 'fade-out');
+    // ── Phase 1: Rapid-fire flashes (accelerating) ──
+    // Pre-create all flash images
+    const flashImgs = validPhotos.map((src) => {
+      const img = document.createElement('img');
       img.src = src;
+      flash.appendChild(img);
+      return img;
+    });
 
-      // Wait for this specific load (already cached from pre-check)
-      await new Promise((resolve) => {
-        if (img.complete && img.naturalWidth > 0) resolve();
-        else { img.onload = resolve; img.onerror = resolve; }
-        setTimeout(resolve, 3000); // safety
-      });
-
-      // Fade in
-      await sleep(100);
-      img.classList.add('visible');
-
-      // Hold
-      await sleep(3000);
-
-      // Fade out
-      img.classList.add('fade-out');
-      await sleep(800);
+    // Timings: start slow, accelerate — like a heartbeat rising
+    const holdTimes = [];
+    const total = flashImgs.length;
+    for (let i = 0; i < total; i++) {
+      const t = Math.round(550 - (i / (total - 1)) * 350); // 550ms → 200ms
+      holdTimes.push(t);
     }
 
-    // Fade out montage screen
-    montage.style.transition = 'opacity 1s ease';
+    for (let i = 0; i < flashImgs.length; i++) {
+      // Flash previous out
+      if (i > 0) {
+        flashImgs[i - 1].classList.remove('flash-in');
+        flashImgs[i - 1].classList.add('flash-out');
+      }
+      // Flash current in
+      await sleep(30);
+      flashImgs[i].classList.add('flash-in');
+      // Hold
+      await sleep(holdTimes[i]);
+    }
+
+    // Flash out last image
+    flashImgs[flashImgs.length - 1].classList.remove('flash-in');
+    flashImgs[flashImgs.length - 1].classList.add('flash-out');
+
+    // ── White flash transition ──
+    await sleep(80);
+    montage.classList.add('white-flash');
+    await sleep(120);
+    flash.style.display = 'none';
+    montage.classList.remove('white-flash');
+
+    // ── Phase 2: 3×3 grid — all photos snap in ──
+    const gridImgs = validPhotos.map((src, i) => {
+      const img = document.createElement('img');
+      img.src = src;
+      // Random slight rotation for visual interest
+      img.style.setProperty('--r', String((Math.random() - 0.5) * 8));
+      grid.appendChild(img);
+      return img;
+    });
+
+    grid.classList.add('visible');
+
+    // Staggered pop-in: each photo snaps in ~60ms apart
+    for (let i = 0; i < gridImgs.length; i++) {
+      await sleep(60);
+      gridImgs[i].classList.add('pop-in');
+    }
+
+    // Hold the grid for a beat
+    await sleep(1200);
+
+    // Fade out montage
+    montage.style.transition = 'opacity 0.8s ease';
     montage.style.opacity = '0';
-    await sleep(1000);
+    await sleep(800);
     montage.classList.add('hidden');
   }
 
