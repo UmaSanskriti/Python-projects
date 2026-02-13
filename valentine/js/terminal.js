@@ -348,7 +348,7 @@
       }, 800);
     }
     if (state.fragments.size === 3) {
-      setTimeout(() => triggerAssembly(), 1500);
+      setTimeout(() => triggerAssembly().catch(() => startReveal()), 1500);
     }
   }
 
@@ -732,24 +732,38 @@
     'images/5.jpg',
   ];
 
+  function loadImage(src) {
+    return new Promise((resolve) => {
+      const testImg = new Image();
+      testImg.onload = () => resolve(true);
+      testImg.onerror = () => resolve(false);
+      testImg.src = src;
+      // Safety timeout — never hang more than 5s per image
+      setTimeout(() => resolve(false), 5000);
+    });
+  }
+
   async function playMontage() {
+    // Pre-check which photos actually exist
+    const results = await Promise.all(photos.map((src) => loadImage(src)));
+    const validPhotos = photos.filter((_, i) => results[i]);
+
+    // Skip montage entirely if no photos loaded
+    if (validPhotos.length === 0) return;
+
     const montage = document.getElementById('montage-screen');
     const img = document.getElementById('montage-img');
-
     montage.classList.remove('hidden');
 
-    for (let i = 0; i < photos.length; i++) {
+    for (const src of validPhotos) {
       img.classList.remove('visible', 'fade-out');
-      img.src = photos[i];
+      img.src = src;
 
-      // Wait for image to load before showing
+      // Wait for this specific load (already cached from pre-check)
       await new Promise((resolve) => {
-        if (img.complete && img.naturalWidth > 0) {
-          resolve();
-        } else {
-          img.onload = resolve;
-          img.onerror = resolve;
-        }
+        if (img.complete && img.naturalWidth > 0) resolve();
+        else { img.onload = resolve; img.onerror = resolve; }
+        setTimeout(resolve, 3000); // safety
       });
 
       // Fade in
@@ -774,17 +788,23 @@
   // ── Reveal ─────────────────────────────────────────────────────────
 
   async function startReveal() {
-    // Fade out terminal
-    $termScreen.style.transition = 'opacity 1.5s ease';
-    $termScreen.style.opacity = '0';
-    await sleep(1500);
-    $termScreen.classList.add('hidden');
+    try {
+      // Fade out terminal
+      $termScreen.style.transition = 'opacity 1.5s ease';
+      $termScreen.style.opacity = '0';
+      await sleep(1500);
+      $termScreen.classList.add('hidden');
 
-    // Play photo montage
-    await playMontage();
-    await sleep(500);
+      // Play photo montage (skips gracefully if no photos)
+      await playMontage();
+      await sleep(500);
+    } catch (_) {
+      // Ensure we always get to the reveal even if montage errors
+      $termScreen.classList.add('hidden');
+      document.getElementById('montage-screen').classList.add('hidden');
+    }
 
-    // Show valentine question
+    // Show valentine question — always reaches here
     $reveal.classList.remove('hidden');
     startHeartsCanvas();
 
