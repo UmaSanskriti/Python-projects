@@ -255,6 +255,43 @@
   const $prompt = document.getElementById('prompt');
   const $reveal = document.getElementById('reveal-screen');
 
+  // ── Music (YouTube IFrame API) ────────────────────────────────────
+
+  let ytPlayer = null;
+  let ytReady = false;
+
+  (function loadYT() {
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  })();
+
+  window.onYouTubeIframeAPIReady = function () {
+    ytPlayer = new YT.Player('yt-player', {
+      width: '1',
+      height: '1',
+      videoId: 'lUPltG1hb3k',
+      playerVars: {
+        autoplay: 0,
+        controls: 0,
+        disablekb: 1,
+        rel: 0,
+        loop: 1,
+        playlist: 'lUPltG1hb3k',
+      },
+      events: {
+        onReady: function () {
+          ytReady = true;
+          ytPlayer.setVolume(50);
+        },
+      },
+    });
+  };
+
+  function cueMusic() {
+    try { if (ytReady) ytPlayer.playVideo(); } catch (_) { /* no-op */ }
+  }
+
   // ── Helpers ────────────────────────────────────────────────────────
 
   function sleep(ms) {
@@ -483,6 +520,8 @@
         }
         addBlank();
         addStyledLines(gitShowData);
+        // Start music on user gesture (Enter keypress chain)
+        cueMusic();
         // This is THE trigger — collect all fragments and launch reveal
         unlockFragment(1);
         unlockFragment(2);
